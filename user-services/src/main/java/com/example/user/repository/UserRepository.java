@@ -6,13 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-
-public interface  UserRepository extends JpaRepository<User, Integer> {
-
+//Clase que extienden de JPARepository para que se conecten a la base de datos de usuarios.
+public interface  UserRepository extends JpaRepository<User,String> {
+    //Query para filtrar por nombre
     @Query(value = "SELECT * FROM user WHERE nombre like %:nombre%", nativeQuery = true)
     List<User> findUserByName(@Param("nombre") String nombre);
-
-    @Query(value = "SELECT * FROM user WHERE username = :username", nativeQuery = true)
-    User findUserByUsername(@Param("username") String username);
 
 }

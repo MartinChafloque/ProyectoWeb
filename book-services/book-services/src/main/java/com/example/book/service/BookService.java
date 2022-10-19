@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+//Declaración de los métodos que contienen la lógica.
 @Service
 public class BookService {
     @Autowired

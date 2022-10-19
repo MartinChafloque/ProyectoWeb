@@ -9,8 +9,8 @@ import java.time.LocalDate;
 @Table(name="user")
 public class User {
 
-    private Integer id;
 
+    @Id
     private String username;
 
     private String contrasenia;
@@ -26,8 +26,7 @@ public class User {
 
     }
 
-    public User(Integer id, String username, String password, String nombre, String apellido, LocalDate fechaNacimiento, String cargo, boolean activo) {
-        this.id = id;
+    public User(String username, String password, String nombre, String apellido, LocalDate fechaNacimiento, String cargo, boolean activo) {
         this.username = username;
         this.contrasenia = password;
         this.nombre = nombre;
@@ -35,16 +34,6 @@ public class User {
         this.fechaNacimiento = fechaNacimiento;
         this.cargo = cargo;
         this.activo = activo;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getUsername() {

@@ -10,7 +10,6 @@ public class Book {
     private String name;
     private String description;
     private String imageUrl;
-
     private int cantidad;
 
   /*  @ManyToOne

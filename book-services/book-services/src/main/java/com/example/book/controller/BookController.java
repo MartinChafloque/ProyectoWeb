@@ -13,7 +13,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+//Clase donde se implementan los métodos declarados por el servicio
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class BookController {
     @Autowired
@@ -23,37 +25,40 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    //RESTful API methods for retrieval operations
-    @GetMapping("/books")//Return a list of all the books in the BD
+    //Métodos API RESTful para operaciones de recuperación
+
+    //Devuelve una lista de todos los libros que estan en la BD
+    @GetMapping("/books")
     public List<Book> list(){
         return bookService.listAll();
     }
 
-    @GetMapping("/books/{id}")//Get information about a specific product based on ID
+    //Obtener información sobre un libro específico basado en un id
+    @GetMapping("/books/{id}")
     public ResponseEntity<Book> get(@PathVariable Integer id){
         try{
-            //if a product is found for the given ID, the server sends a response that includes JSON representation of
-            // the Product object with HTTP status OK (200)
+            //si se encuentra una editorial para el ID dado, el servidor envía una respuesta que incluye
+            // la representación JSON del objeto con el estado HTTP OK (200)
             Book book= bookService.get(id);
             return new ResponseEntity<Book>(book, HttpStatus.OK);
         }catch(NoSuchElementException e){
-            //if no product is found, it returns HTTP status Not Found (404).
+            //si no se encuentra ningún producto, devuelve el estado HTTP status Not Found (404).
             return new ResponseEntity<Book>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping("/books")//Create a book
+    //Crea un libro dado los atributos necesarios para crearlo.
+    @PostMapping("/books")
     public void add(@RequestBody Book book){
         bookService.save(book);
     } //check
 
-    //Update a book
-    @PutMapping("/books/{id}") //Update a book given a specific id
+    //Actualiza un libro dado un id
+    @PutMapping("/books/{id}")
     public ResponseEntity<?> update(@RequestBody Book book,@PathVariable Integer id){
         try{
-            // If a product found with the given ID, it is updated and the server0returns HTTP status OK.
+            // Si se encuentra una editorial con el id dado, se actualiza y el servidor devuelve el estado HTTP OK.
             Book existBook= bookService.get(id);
-            //System.out.println(existBook);
             existBook.setName(book.getName());
             existBook.setDescription(book.getDescription());
             existBook.setImageUrl(book.getImageUrl());
@@ -62,11 +67,13 @@ public class BookController {
             bookService.save(existBook);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch(NoSuchElementException e){
-            //if no product found, the HTTP status Not Found (404) is returned.
+            //si no se encuentra ningun libro, se devuelve el estado HTTP Not found (404).
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    @PatchMapping("/books/{id}")//Update a book given a specific id
+    //Actualiza un libro dado un id, con el método patch, esto para que no tenga que pasar todos los atributos de la editorial
+    //si no solo el atributo que se quiere actualizar.
+    @PatchMapping("/books/{id}")
     public ResponseEntity<?> patch(@PathVariable Integer id, @RequestBody Map<String,Object> fields){
         Book existingBook = bookService.get(id);
         fields.forEach((key,value)->{
@@ -79,12 +86,15 @@ public class BookController {
         Book result = bookService.save(existingBook);
         return ResponseEntity.ok(result);
     }
-    @DeleteMapping("/books/{id}")//Delete a book
+
+    //Elimina un libro dado su id.
+    @DeleteMapping("/books/{id}")
     public void delete(@PathVariable Integer id){
         bookService.delete(id);
     }
 
-    @GetMapping("/books/editorial/{editorialId}") //Gets a list of books given an editorial
+    //Obtiene una lista de libros dado un editorial
+    @GetMapping("/books/editorial/{editorialId}")
     public ResponseEntity<List<Book>> listBooksByEditorialId(@PathVariable("editorialId") Integer id){
         List<Book> books = bookService.byEditorialId(id);
         if(books.isEmpty()) {
@@ -92,10 +102,10 @@ public class BookController {
         }
         return ResponseEntity.ok(books);
     }
+    //Filtrar libros por nombre.
     @Modifying
     @GetMapping("/book/{name}") //Filter Books by a name.
     public ResponseEntity<List<Book>> filterByName(@PathVariable("name") String name){
-        //System.out.println(name);
         List<Book> books= bookService.filterByName("%" + name + "%");
         if(books.isEmpty()) {
             return ResponseEntity.noContent().build();

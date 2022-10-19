@@ -1,7 +1,6 @@
 package com.example.editorial.controller;
 
 import com.example.editorial.entity.Editorial;
-import com.example.editorial.models.Book;
 import com.example.editorial.service.EditorialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +12,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+//Clase donde se implementan los métodos declarados en el servicio
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class EditorialController {
     @Autowired
@@ -22,33 +23,39 @@ public class EditorialController {
         this.edService = edService;
     }
 
-    //RESTful API methods for retrieval operations
-    @GetMapping("/editorials")//Return a list of all the books in the BD
+    //Métodos API RESTful para operaciones de recuperación
+
+    //Devuelve una lista de todos las editoriales en la BD
+    @GetMapping("/editorials")
     public List<Editorial> list(){
         return edService.listAll();
-    } //check
+    }
 
-    @GetMapping("/editorials/{id}")//Get information about a specific product based on ID
+    //Obtener información sobre una editorial específica basado en ID
+    @GetMapping("/editorials/{id}")
     public ResponseEntity<Editorial> get(@PathVariable Integer id){
         try{
-            //if a product is found for the given ID, the server sends a response that includes JSON representation of
-            // the Product object with HTTP status OK (200)
+            //si se encuentra una editorial para el ID dado, el servidor envía una respuesta que incluye
+            // la representación JSON del objeto con el estado HTTP OK (200)
             Editorial ed= edService.get(id);
             return new ResponseEntity<Editorial>(ed, HttpStatus.OK);
         }catch(NoSuchElementException e){
-            //if no product is found, it returns HTTP status Not Found (404).
+            //si no se encuentra ningún producto, devuelve el estado HTTP status Not Found (404).
             return new ResponseEntity<Editorial>(HttpStatus.NOT_FOUND);
         }
-    } //check
-    @PostMapping("/editorials")//Create a book
+    }
+
+    //Crea una editorial dado los atributos necesarios para crearla.
+    @PostMapping("/editorials")
     public void add(@RequestBody Editorial ed){
         edService.save(ed);
-    } //check
-    //Update a book
-    @PutMapping("/editorials/{id}") //Update a book given a specific id
+    }
+
+    //Actualizar una editorial dado un id
+    @PutMapping("/editorials/{id}")
     public ResponseEntity<?> update(@RequestBody Editorial editorial,@PathVariable Integer id){
         try{
-            // If a product found with the given ID, it is updated and the server returns HTTP status OK.
+            // Si se encuentra una editorial con el id dado, se actualiza y el servidor devuelve el estado HTTP OK.
             Editorial existEditorial= edService.get(id);
             existEditorial.setName(editorial.getName());
             System.out.println(editorial.getName());
@@ -56,10 +63,13 @@ public class EditorialController {
             edService.save(existEditorial);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch(NoSuchElementException e){
-            //if no product found, the HTTP status Not Found (404) is returned.
+            //si no se encuentra ninguna editorial, se devuelve el estado HTTP Not found (404).
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    //Actualiza una editorial dado un id, con el método patch, esto para que no tenga que pasar todos los atributos de la editorial
+    //si no solo el atributo que se quiere actualizar.
     @PatchMapping("/editorials/{id}")
     public ResponseEntity<?> patch(@PathVariable Integer id, @RequestBody Map<String,Object> fields){
         Editorial existEditorial= edService.get(id);
@@ -73,19 +83,11 @@ public class EditorialController {
         Editorial result = edService.save(existEditorial);
         return ResponseEntity.ok(result);
     }
-    @DeleteMapping("/editorials/{id}")//Delete a book
+
+    //Elimina una editorial dado su id.
+    @DeleteMapping("/editorials/{id}")
     public void delete(@PathVariable Integer id){
         edService.delete(id);
     }
 
-    @GetMapping("/editorials/books/{editorialId}")
-    public ResponseEntity<List<Book>> getBooks(@PathVariable("editorialId") Integer id){
-        Editorial ed = edService.get(id);
-        if(ed == null){
-            return ResponseEntity.notFound().build();
-        }
-        List<Book> books = edService.getBooks(id);
-        return ResponseEntity.ok(books);
-
-    }
 }
