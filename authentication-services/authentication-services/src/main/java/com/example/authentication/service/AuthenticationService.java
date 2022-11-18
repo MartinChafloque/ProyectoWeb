@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//Declaración de los métodos que contienen la lógica.
 @Service
 public class AuthenticationService {
     @Autowired
@@ -26,6 +25,13 @@ public class AuthenticationService {
 
     @Autowired
     private PasswordEncoder encoder; //Encriptador de contraseñas
+
+    /** Hace el login dado un usuario y contraseña
+     *
+     * @param username
+     * @param pwd
+     * @return un userAuth
+     */
     public UserAuth login(String username, String pwd) {
 
         String token = getJWTToken(username);
@@ -47,7 +53,11 @@ public class AuthenticationService {
         }
     }
 
-    //toma el  JSON Web Token (JWT) para las credenciales de usuario proporcionadas.
+    /** Toma el JSON Web Token (JWT) para las credenciales de usuario proporcionadas
+     *
+     * @param username
+     * @return el token
+     */
     private String getJWTToken(String username) {
         String secretKey = "mySecretKey";
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils

@@ -23,15 +23,21 @@ public class EditorialController {
         this.edService = edService;
     }
 
-    //Métodos API RESTful para operaciones de recuperación
 
-    //Devuelve una lista de todos las editoriales en la BD
+    /** Devuelta una lista de todas las editoriales en la BD
+     *
+     * @return la lista de editoriales
+     */
     @GetMapping("/editorials")
     public List<Editorial> list(){
         return edService.listAll();
     }
 
-    //Obtener información sobre una editorial específica basado en ID
+    /** Obtiene información sobre una editorial basado en un id
+     *
+     * @param id
+     * @return la editorial encontrada
+     */
     @GetMapping("/editorials/{id}")
     public ResponseEntity<Editorial> get(@PathVariable Integer id){
         try{
@@ -45,13 +51,21 @@ public class EditorialController {
         }
     }
 
-    //Crea una editorial dado los atributos necesarios para crearla.
+    /** Crea una nueva editorial
+     *
+     * @param ed
+     */
     @PostMapping("/editorials")
     public void add(@RequestBody Editorial ed){
         edService.save(ed);
     }
 
-    //Actualizar una editorial dado un id
+    /** Actualiza una editorial
+     *
+     * @param editorial
+     * @param id
+     * @return un estado http
+     */
     @PutMapping("/editorials/{id}")
     public ResponseEntity<?> update(@RequestBody Editorial editorial,@PathVariable Integer id){
         try{
@@ -68,8 +82,12 @@ public class EditorialController {
         }
     }
 
-    //Actualiza una editorial dado un id, con el método patch, esto para que no tenga que pasar todos los atributos de la editorial
-    //si no solo el atributo que se quiere actualizar.
+    /** Actualiza una editorial con el método patch
+     *
+     * @param id
+     * @param fields
+     * @return la editorial modificada
+     */
     @PatchMapping("/editorials/{id}")
     public ResponseEntity<?> patch(@PathVariable Integer id, @RequestBody Map<String,Object> fields){
         Editorial existEditorial= edService.get(id);
@@ -84,10 +102,12 @@ public class EditorialController {
         return ResponseEntity.ok(result);
     }
 
-    //Elimina una editorial dado su id.
+    /** Elimina una editorial dado su id
+     *
+     * @param id
+     */
     @DeleteMapping("/editorials/{id}")
     public void delete(@PathVariable Integer id){
         edService.delete(id);
     }
-
 }

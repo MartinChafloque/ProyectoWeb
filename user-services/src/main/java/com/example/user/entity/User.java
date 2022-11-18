@@ -16,7 +16,7 @@ public class User {
     private String contrasenia;
     private String nombre;
     private String apellido;
-    @JsonFormat(pattern="yyyy/MM/dd")
+    //@JsonFormat(pattern="yyyy/MM/dd")
     private LocalDate fechaNacimiento;
     private String cargo;
 

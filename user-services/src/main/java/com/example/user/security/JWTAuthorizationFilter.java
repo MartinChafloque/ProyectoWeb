@@ -19,7 +19,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private final String HEADER = "Authorization";
     private final String PREFIX = "Bearer ";
     private final String SECRET= "mySecretKey";
-    // recuperar el token y determinar si el cliente tiene permisos o no.
+
+    /** Recupera el token y mira si el ciente tiene permisos
+     *
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try{
@@ -40,6 +48,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
     }
+
+    /**
+     * Authentication method in Spring flow
+     *
+     * @param claims
+     */
     private void setUpSpringAuthentication(Claims claims) {
         List<String> authorities = (List<String>) claims.get("authorities");
 
@@ -47,12 +61,23 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 null, authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
-    //Validación del token
+
+    /** Valida si el token es correcto
+     *
+     * @param request
+     * @return claims
+     */
     private Claims validateToken(HttpServletRequest request) {
         String jwtToken = request.getHeader(HEADER).replace(PREFIX, "");
         return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(jwtToken).getBody();
     }
 
+    /** Valida si el token tiene el header correspondiente
+     *
+     * @param request
+     * @param res
+     * @return un boolean dependiendo de la respuesta
+     */
     private boolean checkJWTToken(HttpServletRequest request, HttpServletResponse res) {
         String authenticationHeader = request.getHeader(HEADER);
         if (authenticationHeader == null | !authenticationHeader.startsWith(PREFIX))

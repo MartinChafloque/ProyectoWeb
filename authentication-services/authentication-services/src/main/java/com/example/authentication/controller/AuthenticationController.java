@@ -14,7 +14,12 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationService authService;
 
-    //Método login
+    /** Hace el login dado un usuario y contraseña
+     *
+     * @param username
+     * @param pwd
+     * @return un userAuth
+     */
     @PostMapping("login")
     public UserAuth login(@RequestParam("user") String username, @RequestParam("password") String pwd) {
         return authService.login(username, pwd);

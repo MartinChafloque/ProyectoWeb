@@ -13,9 +13,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-//Clase donde se implementan los métodos declarados por el servicio
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class BookController {
     @Autowired
@@ -25,15 +23,23 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    //Métodos API RESTful para operaciones de recuperación
 
-    //Devuelve una lista de todos los libros que estan en la BD
+    /**Devuelve una lista de todos los libros que estan en la BD
+     *
+     * @return todos los libros
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/books")
     public List<Book> list(){
         return bookService.listAll();
     }
 
-    //Obtener información sobre un libro específico basado en un id
+    /** Obtener información sobre un libro específico basado en un id
+     *
+     * @param id
+     * @return el libro encontrado y el estado http
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/books/{id}")
     public ResponseEntity<Book> get(@PathVariable Integer id){
         try{
@@ -47,13 +53,23 @@ public class BookController {
         }
     }
 
-    //Crea un libro dado los atributos necesarios para crearlo.
+    /** Crea un nuevo libro
+     *
+     * @param book
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/books")
     public void add(@RequestBody Book book){
         bookService.save(book);
-    } //check
+    }
 
-    //Actualiza un libro dado un id
+    /** Actualiza un libro dado un id
+     *
+     * @param book
+     * @param id
+     * @return retorna un estado http
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/books/{id}")
     public ResponseEntity<?> update(@RequestBody Book book,@PathVariable Integer id){
         try{
@@ -71,8 +87,14 @@ public class BookController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    //Actualiza un libro dado un id, con el método patch, esto para que no tenga que pasar todos los atributos de la editorial
-    //si no solo el atributo que se quiere actualizar.
+
+    /** Actualiza un libro dado un id con el método patch
+     *
+     * @param id
+     * @param fields
+     * @return el libro modificado
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PatchMapping("/books/{id}")
     public ResponseEntity<?> patch(@PathVariable Integer id, @RequestBody Map<String,Object> fields){
         Book existingBook = bookService.get(id);
@@ -87,13 +109,22 @@ public class BookController {
         return ResponseEntity.ok(result);
     }
 
-    //Elimina un libro dado su id.
+    /** Elimina un libro dado su id
+     *
+     * @param id
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/books/{id}")
     public void delete(@PathVariable Integer id){
         bookService.delete(id);
     }
 
-    //Obtiene una lista de libros dado un editorial
+    /** Obtiene una lista de libros dado un id de editorial
+     *
+     * @param id
+     * @return la lista de libros
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/books/editorial/{editorialId}")
     public ResponseEntity<List<Book>> listBooksByEditorialId(@PathVariable("editorialId") Integer id){
         List<Book> books = bookService.byEditorialId(id);
@@ -102,9 +133,15 @@ public class BookController {
         }
         return ResponseEntity.ok(books);
     }
-    //Filtrar libros por nombre.
+
+    /** Busca libros dado un nombre
+     *
+     * @param name
+     * @return la lista de libros
+     */
     @Modifying
-    @GetMapping("/book/{name}") //Filter Books by a name.
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/book/{name}")
     public ResponseEntity<List<Book>> filterByName(@PathVariable("name") String name){
         List<Book> books= bookService.filterByName("%" + name + "%");
         if(books.isEmpty()) {

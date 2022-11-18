@@ -18,7 +18,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private final String HEADER = "Authorization";
     private final String PREFIX = "Bearer ";
     private final String SECRET = "mySecretKey";
-    // recuperar el token y determinar si el cliente tiene permisos o no.
+
+    /** Recupera el token y determina si el cliente tiene permisos o no
+     *
+     * @param request
+     * @param response
+     * @param chain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
@@ -40,7 +48,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    //Validación del token
+    /** Valida si el token es correcto
+     *
+     * @param request
+     * @return claims
+     */
     private Claims validateToken(HttpServletRequest request) {
         String jwtToken = request.getHeader(HEADER).replace(PREFIX, "");
         return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(jwtToken).getBody();
@@ -61,11 +73,16 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     }
 
+    /** Valida si el token tiene el header correspondiente
+     *
+     * @param request
+     * @param res
+     * @return un boolean dependiendo de la respuesta
+     */
     private boolean checkJWTToken(HttpServletRequest request, HttpServletResponse res) {
         String authenticationHeader = request.getHeader(HEADER);
         if (authenticationHeader == null || !authenticationHeader.startsWith(PREFIX))
             return false;
         return true;
     }
-
 }

@@ -23,9 +23,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    //Métodos API RESTful para operaciones de recuperación
-
-    //Devuelve una lista de todos los usuarios activos en la BD
+    /** Obtiene una lista de todos los usuarios activos en la BD
+     *
+     * @return la lista de usuarios
+     */
     @GetMapping("/users")
     public List<User> list(){
         List<User> activos = new ArrayList<>();
@@ -37,7 +38,11 @@ public class UserController {
         return activos;
     }
 
-    //Obtener información sobre una editorial específica basado en ID
+    /** Obtiene información sobre un usuario dado un username
+     *
+     * @param username
+     * @return el usuario y un estado http
+     */
     @GetMapping("/users/{username}")
     public ResponseEntity<User> get(@PathVariable("username") final String username){
         try{
@@ -54,12 +59,21 @@ public class UserController {
         }
     }
 
+    /** Crea un nuevo usuario
+     *
+     * @param user
+     */
     @PostMapping("/users")
     public void add(@RequestBody User user){
         userService.save(user);
     }
 
-    //Actualizar un usuario dado un id
+    /** Actualiza un usuario dado un username
+     *
+     * @param user
+     * @param username
+     * @return un estado http
+     */
     @PutMapping("/users/{username}")
     public ResponseEntity<?> update(@RequestBody User user,@PathVariable("username") final String username){
         try{
@@ -76,8 +90,13 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    //Actualiza un usuario dado un id, con el método patch, esto para que no tenga que pasar todos los atributos de la editorial
-    //si no solo el atributo que se quiere actualizar.
+
+    /** Actualiza un usuario con el método patch
+     *
+     * @param username
+     * @param fields
+     * @return el usuario modificado
+     */
     @PatchMapping("/users/{username}")
     public ResponseEntity<?> patch(@PathVariable("username") final String username, @RequestBody Map<String,Object> fields){
         User existingUser = userService.get(username);
@@ -92,7 +111,11 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    //Inactiva un usuario dado
+    /** Inactiva un usuario dado un username
+     *
+     * @param username
+     * @return el usuario inactivo
+     */
     @DeleteMapping("/users/{username}")
     public ResponseEntity<User> delete(@PathVariable("username") final String username){
         User existingUser = userService.get(username);
@@ -101,8 +124,13 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
+    /** Filtrar usuarios dado un nombre
+     *
+     * @param nombre
+     * @return lista de usuarios
+     */
     @Modifying
-    @GetMapping("/user/{nombre}") //Filtrar usuarios dado un nombre
+    @GetMapping("/user/{nombre}")
     public ResponseEntity<List<User>> filterByName(@PathVariable("nombre") String nombre){
         List<User> users= userService.filterByName("%" + nombre + "%");
         if(users.isEmpty()) {
